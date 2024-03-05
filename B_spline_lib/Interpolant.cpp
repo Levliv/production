@@ -15,21 +15,37 @@ datatype* Interpolant::BuildInterpolant(datatype* actualGrid, int actualGridSize
 {
   auto* result = new datatype [actualGridSize];
   std::pair<int, int> point;
-  //#pragma omp parallel for num_threads(1)
-  for (int i = 0; i < actualGridSize; ++i) {
+  #pragma omp parallel for private (point) num_threads(4)
+  for (ptrdiff_t i = 0; i < actualGridSize; ++i) {
     point = FindClosed(actualGrid[i]);
     result[i] = functionValues[point.first] +
-        (functionValues[point.second] - functionValues[point.first]) *
-        (interpolationFunction(actualGrid[i]) - interpolationFunction(grid[point.first])) / (interpolationFunction(grid[point.second]) - interpolationFunction(grid[point.first]));
+                (functionValues[point.second] - functionValues[point.first]) *
+                (interpolationFunction(actualGrid[i]) - interpolationFunction(grid[point.first])) /
+                (interpolationFunction(grid[point.second]) - interpolationFunction(grid[point.first]));
   }
   return result;
 }
 
 std::pair<int, int> Interpolant::FindClosed(datatype point) {
+  int leftIndex = 0;
+  int rightIndex = gridSize - 1;
+  int pivot;
+  while (leftIndex <= rightIndex) {
+    pivot = (int)((leftIndex + rightIndex) / 2);
+    if (point >= grid[pivot]) {
+      leftIndex = pivot + 1;
+    }
+    else {
+      rightIndex = pivot - 1;
+    }
+  }
+  return {leftIndex - 1, leftIndex};
+  /*
   for (int i = 0; i < gridSize-1; ++i) {
     if (point < grid[i]) {
       return {i-1, i};
     }
   }
   return {gridSize-2, gridSize-1};
+   */
 }

@@ -122,7 +122,7 @@ int main() {
   //long double number {2.1};
   //std::cout << "sizeof(number) =" << number << std::endl;
   //spline_create();
-  test_error(0.1, 0.6, 30000, 1, 10);
+  test_error(0.1, 6000, 300000, 1, 10);
   return 0;
 }
 
