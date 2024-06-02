@@ -1,6 +1,10 @@
 ## Overview
 This is a repository to support the experiments performed as part of the research final qualification work in 2023/2024 academic  year.
 
+There are 2 blocks of conducted experiments:
+
+1. experiments on the error of quasi-linear and linear interpolation;
+2. experiments on parallelization of quasi-linear interpolation and time spent.
 ## To run the code:
 1. clone this repository
 2. Make sure you have MinGW (gcc and g++ compilers) and CMake installed and paths set
