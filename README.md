@@ -1,4 +1,5 @@
-This repository is for research work within the framework of the final qualifying work in the 2023/2024 academic year.
+## Overview
+This is a repository to support the experiments performed as part of the research final qualification work in 2023/2024 academic  year.
 
 ## To run the code:
 1. clone this repository
