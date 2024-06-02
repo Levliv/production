@@ -11,11 +11,11 @@ Interpolant::Interpolant(datatype* grid, datatype* functionValues, int gridSize,
   this->interpolationFunction = interpolationFunction;
 }
 
-datatype* Interpolant::BuildInterpolant(datatype* actualGrid, int actualGridSize)
+datatype* Interpolant::BuildInterpolant(datatype* actualGrid, int actualGridSize, int numThreads)
 {
   auto* result = new datatype [actualGridSize];
   std::pair<int, int> point;
-  #pragma omp parallel for private (point) num_threads(4)
+  #pragma omp parallel for private (point) num_threads(numThreads)
   for (ptrdiff_t i = 0; i < actualGridSize; ++i) {
     point = FindClosed(actualGrid[i]);
     result[i] = functionValues[point.first] +
@@ -40,12 +40,4 @@ std::pair<int, int> Interpolant::FindClosed(datatype point) {
     }
   }
   return {leftIndex - 1, leftIndex};
-  /*
-  for (int i = 0; i < gridSize-1; ++i) {
-    if (point < grid[i]) {
-      return {i-1, i};
-    }
-  }
-  return {gridSize-2, gridSize-1};
-   */
 }

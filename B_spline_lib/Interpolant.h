@@ -9,7 +9,7 @@ class Interpolant
 {
 public:
   explicit Interpolant(datatype*, datatype*, int, std::function<datatype (datatype)>);
-  datatype* BuildInterpolant(datatype*, int);
+  datatype* BuildInterpolant(datatype*, int, int);
 
 private:
   datatype* grid;
