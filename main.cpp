@@ -144,7 +144,7 @@ void testTime(datatype leftBorder, datatype rightBorder, int spDegree, int multi
   testTimePerThread(leftBorder, rightBorder, spDegree, multiplier, numberRuns, 4);
 }
 
-void test_error(datatype leftBorder, datatype rightBorder, int numberOfSegments, int spDegree, int multiplier)
+void testError(datatype leftBorder, datatype rightBorder, int numberOfSegments, int spDegree, int multiplier)
 {
   auto* grid = new datatype[numberOfSegments + 2 * spDegree + 1];
   auto* functionValues = new datatype[numberOfSegments + 2 * spDegree + 1];
@@ -179,17 +179,9 @@ void test_error(datatype leftBorder, datatype rightBorder, int numberOfSegments,
   }
   auto* ags = new datatype [numberOfSegments * multiplier + 1];
   auto* polynomial_ags = new datatype [numberOfSegments * multiplier + 1];
-  clock_t start = clock();
   ags = interpolant->BuildInterpolant(shallowGrid, numberOfSegments * multiplier + 1, 1);
-  clock_t end = clock();
-  double seconds = (double)(end - start) / CLOCKS_PER_SEC;
-  std::cout << "Consumed time: " << seconds << endl;
 
-  start = clock();
   polynomial_ags = polynomial_interpolant->BuildInterpolant(shallowGrid, numberOfSegments * multiplier + 1, 1);
-  end = clock();
-  seconds = (double)(end - start) / CLOCKS_PER_SEC;
-  std::cout << "Consumed time: " << seconds << endl;
 
   datatype currentError = abs(func(shallowGrid[0]) - ags[0]);
   datatype maxError = currentError;
@@ -218,67 +210,8 @@ void test_error(datatype leftBorder, datatype rightBorder, int numberOfSegments,
   std::cout << "Linear spline max error: " << maxError << std::endl;
 }
 
-void adaptiveGrid(datatype left_border, // левый конец промежутка
-                  datatype right_border, // правый конец промежутка
-                  int number_of_approx_segments, // Количество промежутков аппроксимации
-                  int spline_order // степень сплайна (порядок - 1))
-){
-  auto* derivativeGrid = new datatype[number_of_approx_segments + 2 * spline_order + 1];
-  derivativeGrid = GridGenerator(left_border, right_border, number_of_approx_segments, spline_order);
-  auto* derivativeValues = new datatype[number_of_approx_segments + 2 * spline_order + 1];
-  for (int i = 0; i < number_of_approx_segments + 2 * spline_order + 1; ++i) {
-    derivativeValues[i] = getFuncDerivative(derivativeGrid[i]);
-  }
-  auto* interpolant = new Interpolant(derivativeGrid, derivativeValues,
-                                      number_of_approx_segments + 2 * spline_order + 1, linearSplineFunc);
-  
-}
-
 int main() {
-  testTime(0.1, 6000, 1, 10, 1);
-
+  testTime(0.1, 6000, 1, 10, 20);
+  testError(0.1, 0.6, 10, 1, 10);
   return 0;
-}
-
-
-
-
-
-
-
-void B_spline_creator(){
-  int N = 5; // количество промежутков апроксимации
-  int m = 1; // степень сплайна (порядок - 1)
-  datatype a = 0.1; // левый конец промежутка
-  datatype b = 0.6; // правый конец промежутка
-  vector<datatype> x(N + 1 + 2 * m);
-  vector<datatype> y(N + 1 + 2 * m);
-  x = Grid_generator(a, b, N, m);
-  int multiplier = 20;
-  vector<datatype> shallowGrid((N + 1 + m) * multiplier);
-  for (int i = m; i < N + m; ++i){
-    for (int j = 0; j <= multiplier; ++j){
-      int idx = i * multiplier + j;
-      datatype step = (x[i+1] - x[i]) / multiplier;
-      shallowGrid[idx] = x[i]  + step * j;
-    }
-  }
-  std::ofstream out;
-  out.open("B_spline_data.txt");
-  if (!out.is_open())
-  {
-    cout << "Error! File is not opened";
-  }
-  // Нарисуем первый Bphi сплайн
-  for (int i = m; i < m + 1; ++i){
-    for (int j = 0; j <= multiplier; ++j){
-      int idx = i * multiplier + j;
-      //cout << shallowGrid[idx] << endl;
-      out << shallowGrid[idx] << " " << (quasiLinerSplineFunc(shallowGrid[idx]) - quasiLinerSplineFunc(x[i])) / (quasiLinerSplineFunc(
-          x[i + 1]) -
-                                                                                                                 quasiLinerSplineFunc(x[i])) << endl;
-    }
-  }
-  //vector<datatype> weight();
-  out.close();
 }
